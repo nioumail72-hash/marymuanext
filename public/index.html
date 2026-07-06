@@ -31,7 +31,7 @@
 
       <main id="publicView">
         <section class="hero" id="accueil">
-          <div class="hero-bg" role="img" aria-label="Vue moderne d'Abidjan et logements premium"></div>
+          <div class="hero-bg" id="heroBg" role="img" aria-label="Vue moderne d'Abidjan et logements premium"></div>
           <div class="hero-overlay"></div>
           <div class="hero-content">
             <p class="eyebrow">Abidjan, Cote d'Ivoire - FCFA - location & vente</p>
@@ -223,6 +223,21 @@
           </div>
           <div class="admin-dashboard locked" id="adminDashboard">
             <div class="metric-grid" id="metricGrid"></div>
+            <div class="site-settings-manager">
+              <form class="site-settings-form" id="siteSettingsForm">
+                <div class="form-title-row">
+                  <div>
+                    <p class="eyebrow">Accueil public</p>
+                    <h3>Image de fond</h3>
+                  </div>
+                </div>
+                <label>Image d'accueil URL<input name="heroImage" type="text" required maxlength="1200000" placeholder="https://... ou image choisie"></label>
+                <label>Importer image accueil<input id="heroImageFile" type="file" accept="image/png,image/jpeg,image/webp"></label>
+                <label>Description image<input name="heroAlt" required minlength="4" maxlength="160" placeholder="Vue moderne d'Abidjan et logements premium"></label>
+                <div class="image-admin-preview" id="heroImagePreview" aria-live="polite"></div>
+                <button class="primary-button" type="submit">Enregistrer l'image d'accueil</button>
+              </form>
+            </div>
             <div class="city-tile-manager">
               <div>
                 <h3>Vignettes villes</h3>
@@ -296,7 +311,7 @@
                 <label>Description<textarea name="description" rows="4" required minlength="20" maxlength="1200" placeholder="Presentation complete du logement"></textarea></label>
                 <div class="form-grid two">
                   <label>Equipements<textarea name="amenities" rows="4" required maxlength="1200" placeholder="WiFi fibre&#10;Parking&#10;Climatisation"></textarea></label>
-                  <label>Points forts<textarea name="highlights" rows="4" maxlength="1200" placeholder="Excellent emplacement&#10;Vue degagee&#10;Entree autonome"></textarea></label>
+                  <label>Points forts<textarea name="highlights" rows="4" maxlength="1200" placeholder="Quartier pratique&#10;Vue degagee&#10;Entree autonome"></textarea></label>
                   <label>Regles de la maison<textarea name="houseRules" rows="4" maxlength="1400" placeholder="Piece d'identite requise&#10;Respect du voisinage"></textarea></label>
                   <label>Moyens de paiement<textarea name="paymentMethods" rows="4" maxlength="600" placeholder="Mobile Money&#10;Carte bancaire&#10;Virement"></textarea></label>
                 </div>
@@ -325,6 +340,12 @@
         <button class="outline-button" id="printReceipt">Imprimer</button>
         <button class="primary-button" id="downloadReceipt">Telecharger le PDF</button>
       </div>
+    </dialog>
+
+    <dialog class="image-lightbox" id="imageLightbox">
+      <button class="modal-close" data-close-lightbox aria-label="Fermer">x</button>
+      <img id="lightboxImage" alt="">
+      <p id="lightboxCaption"></p>
     </dialog>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>

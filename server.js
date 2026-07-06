@@ -313,9 +313,15 @@ const seedCityTiles = [
   }
 ];
 
+const seedSiteSettings = {
+  heroImage: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=80",
+  heroAlt: "Vue moderne d'Abidjan et logements premium"
+};
+
 const seedDb = {
   properties: seedProperties,
   cityTiles: seedCityTiles,
+  siteSettings: seedSiteSettings,
   bookings: [],
   messages: [
     {
@@ -344,6 +350,7 @@ function readDb() {
   ensureDb();
   const db = JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
   if (!Array.isArray(db.cityTiles)) db.cityTiles = seedCityTiles;
+  if (!db.siteSettings) db.siteSettings = seedSiteSettings;
   return db;
 }
 
@@ -576,6 +583,18 @@ function normalizeCityTilePayload(payload, existingTile = null) {
   };
 }
 
+function normalizeSiteSettingsPayload(payload, existingSettings = {}) {
+  const heroImage = cleanUrl(payload.heroImage || existingSettings.heroImage, 1_200_000);
+  const heroAlt = cleanText(payload.heroAlt || existingSettings.heroAlt || "Image d'accueil hebergementciv", 160);
+  if (!heroImage) throw new Error("Image d'accueil invalide");
+  if (heroAlt.length < 4) throw new Error("Description de l'image invalide");
+  return {
+    ...existingSettings,
+    heroImage,
+    heroAlt
+  };
+}
+
 function parseIsoDate(value) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ""))) return null;
   const date = new Date(`${value}T00:00:00.000Z`);
@@ -653,6 +672,7 @@ function publicSnapshot(db) {
   return {
     properties: db.properties,
     cityTiles: db.cityTiles || [],
+    siteSettings: db.siteSettings || seedSiteSettings,
     stats: {
       listings: db.properties.length,
       bookings: db.bookings.length,
@@ -1067,6 +1087,7 @@ async function handleApi(req, res) {
         payments: db.payments,
         properties: db.properties,
         cityTiles: db.cityTiles || [],
+        siteSettings: db.siteSettings || seedSiteSettings,
         metrics: {
           revenue,
           pendingBookings: db.bookings.filter(item => item.status !== "Confirmee").length,
@@ -1074,6 +1095,22 @@ async function handleApi(req, res) {
           availableListings: db.properties.length
         }
       });
+      return;
+    }
+
+    if (req.method === "PATCH" && url.pathname === "/api/admin/settings") {
+      if (!requireAdmin(req, res)) return;
+      const payload = await parseBody(req);
+      let siteSettings;
+      try {
+        siteSettings = normalizeSiteSettingsPayload(payload, db.siteSettings || seedSiteSettings);
+      } catch (error) {
+        sendJson(res, 400, { error: error.message });
+        return;
+      }
+      db.siteSettings = siteSettings;
+      writeDb(db);
+      sendJson(res, 200, { siteSettings });
       return;
     }
 

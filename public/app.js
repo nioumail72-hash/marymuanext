@@ -1,6 +1,7 @@
 const state = {
   properties: [],
   cityTiles: [],
+  siteSettings: {},
   filters: {
     category: "",
     location: "",
@@ -51,6 +52,23 @@ function splitLines(value) {
 
 function uniqueList(items) {
   return [...new Set(items.filter(Boolean))];
+}
+
+function applySiteSettings(settings = state.siteSettings) {
+  const hero = qs("#heroBg");
+  if (!hero || !settings?.heroImage) return;
+  hero.style.backgroundImage = `url('${settings.heroImage}')`;
+  hero.setAttribute("aria-label", settings.heroAlt || "Image d'accueil hebergementciv");
+}
+
+function syncHeroImagePreview() {
+  const form = qs("#siteSettingsForm");
+  const preview = qs("#heroImagePreview");
+  if (!form || !preview) return;
+  const image = form.elements.heroImage.value;
+  preview.innerHTML = image
+    ? `<span style="background-image:url('${image}')" title="Image d'accueil"></span>`
+    : "<small>Aucune image ajoutee.</small>";
 }
 
 function syncImagePreview() {
@@ -120,6 +138,44 @@ async function handleGalleryFiles(event) {
   }
 }
 
+async function handleHeroImageFile(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  try {
+    qs("#siteSettingsForm").elements.heroImage.value = await imageFileToDataUrl(file);
+    syncHeroImagePreview();
+    toast("Image d'accueil ajoutee");
+  } catch (error) {
+    toast(error.message);
+  } finally {
+    event.target.value = "";
+  }
+}
+
+function fillSiteSettingsForm(settings = state.siteSettings) {
+  const form = qs("#siteSettingsForm");
+  if (!form) return;
+  form.elements.heroImage.value = settings.heroImage || "";
+  form.elements.heroAlt.value = settings.heroAlt || "Vue moderne d'Abidjan et logements premium";
+  syncHeroImagePreview();
+}
+
+async function submitSiteSettings(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  if (!form.reportValidity()) return;
+  const payload = Object.fromEntries(new FormData(form).entries());
+  try {
+    const { siteSettings } = await api("/api/admin/settings", { method: "PATCH", admin: true, body: payload });
+    state.siteSettings = siteSettings;
+    applySiteSettings();
+    syncHeroImagePreview();
+    toast("Image d'accueil mise a jour");
+  } catch (error) {
+    toast(error.message);
+  }
+}
+
 function toast(message) {
   const node = qs("#toast");
   node.textContent = message;
@@ -145,6 +201,8 @@ async function loadBootstrap() {
   const data = await api("/api/bootstrap");
   state.properties = data.properties;
   state.cityTiles = data.cityTiles || [];
+  state.siteSettings = data.siteSettings || {};
+  applySiteSettings();
   const statListings = qs("#statListings");
   if (statListings) statListings.textContent = data.stats.listings;
   renderCityCarousel();
@@ -346,19 +404,20 @@ function renderPropertyPage(property) {
       </div>
 
       <nav class="detail-tabs" aria-label="Sections du logement">
-        <a href="#overview">Vue d'ensemble</a>
-        <a href="#tarifs">Tarifs</a>
-        <a href="#equipements">Equipements</a>
-        <a href="#regles">Regles de la maison</a>
-        <a href="#avis">Commentaires clients</a>
+        <button type="button" data-scroll-detail="#overview">Ambiance</button>
+        <button type="button" data-scroll-detail="#tarifs">Sejour</button>
+        <button type="button" data-scroll-detail="#equipements">Confort</button>
+        <button type="button" data-scroll-detail="#regles">Conditions</button>
+        <button type="button" data-scroll-detail="#avis">Retours clients</button>
+        <button type="button" data-go-public="#biens">Autres biens</button>
       </nav>
 
       <div class="detail-title-row" id="overview">
         <div>
-          <p class="breadcrumbs">Accueil / Logements / ${property.category} / ${property.district}</p>
-          <div class="stars">*****</div>
+          <p class="breadcrumbs"><button type="button" data-go-public="#accueil">Accueil</button> / <button type="button" data-go-public="#biens">Logements</button> / ${property.category} / ${property.district}</p>
+          <div class="stars">Selection hebergementciv</div>
           <h1>${property.title}</h1>
-          <p class="location-line">Localisation: ${property.district}, ${property.city} - Excellent emplacement - voir la carte</p>
+          <p class="location-line">Adresse suivie localement: ${property.district}, ${property.city}</p>
         </div>
         <div class="detail-actions">
           <button class="outline-button" type="button">Enregistrer</button>
@@ -367,19 +426,19 @@ function renderPropertyPage(property) {
       </div>
 
       <div class="detail-gallery">
-        <div class="gallery-main" style="background-image:url('${images[0]}')"></div>
+        <button class="gallery-main gallery-zoom" type="button" data-lightbox-image="${images[0]}" data-lightbox-caption="${property.title} - image principale" style="background-image:url('${images[0]}')" aria-label="Agrandir l'image principale"></button>
         <div class="gallery-stack">
-          <div style="background-image:url('${images[1]}')"></div>
-          <div style="background-image:url('${images[2]}')"></div>
+          <button class="gallery-zoom" type="button" data-lightbox-image="${images[1]}" data-lightbox-caption="${property.title} - image 2" style="background-image:url('${images[1]}')" aria-label="Agrandir l'image 2"></button>
+          <button class="gallery-zoom" type="button" data-lightbox-image="${images[2]}" data-lightbox-caption="${property.title} - image 3" style="background-image:url('${images[2]}')" aria-label="Agrandir l'image 3"></button>
         </div>
         <aside class="score-card">
-          <div class="score-head"><span>Superbe</span><strong>${property.rating.toFixed(1)}</strong></div>
-          <p>4 experiences vecues</p>
-          <strong>Excellent emplacement !</strong>
-          <div class="mini-map">Abidjan<br><span>${property.district}</span></div>
+          <div class="score-head"><span>Indice confiance</span><strong>${property.rating.toFixed(1)}</strong></div>
+          <p>Dossier verifie, suivi client et disponibilite confirmee par l'equipe.</p>
+          <strong>Quartier: ${property.district}</strong>
+          <div class="mini-map">Repere local<br><span>${property.city}</span></div>
         </aside>
         <div class="gallery-thumbs">
-          ${images.slice(3).map((image, index) => `<div style="background-image:url('${image}')">${index === 2 ? "<span>+ photos</span>" : ""}</div>`).join("")}
+          ${images.slice(3).map((image, index) => `<button class="gallery-zoom" type="button" data-lightbox-image="${image}" data-lightbox-caption="${property.title} - image ${index + 4}" style="background-image:url('${image}')" aria-label="Agrandir l'image ${index + 4}">${index === 2 ? "<span>+ photos</span>" : ""}</button>`).join("")}
         </div>
       </div>
 
@@ -436,7 +495,7 @@ function renderPropertyPage(property) {
         </div>
         <div id="avis">
           <h2>Commentaires clients</h2>
-          <div class="review-score"><strong>${property.rating.toFixed(1)}</strong><span>Superbe - 4 experiences vecues</span></div>
+          <div class="review-score"><strong>${property.rating.toFixed(1)}</strong><span>Indice confiance - retours verifies</span></div>
           <div class="review-bars">
             ${["Personnel", "Equipements", "Proprete", "Confort", "Rapport qualite/prix", "Situation geographique"].map((label, index) => `<p><span>${label}</span><strong>${index === 5 ? "10" : "8,8"}</strong></p>`).join("")}
           </div>
@@ -545,6 +604,23 @@ function downloadReceiptPdf() {
   document.body.appendChild(link);
   link.click();
   link.remove();
+}
+
+function showImageLightbox(image, caption = "") {
+  const dialog = qs("#imageLightbox");
+  const img = qs("#lightboxImage");
+  const text = qs("#lightboxCaption");
+  if (!dialog || !img) return;
+  img.src = image;
+  img.alt = caption || "Image du logement";
+  text.textContent = caption;
+  dialog.showModal();
+}
+
+function goPublicSection(target = "#accueil") {
+  if (location.pathname !== "/") history.pushState({}, "", "/");
+  showView("public");
+  setTimeout(() => qs(target)?.scrollIntoView({ behavior: "smooth" }), 30);
 }
 
 function syncBookingNights() {
@@ -918,6 +994,8 @@ async function loadAdmin() {
     metricCard("Requetes ouvertes", data.metrics.openMessages),
     metricCard("Biens au catalogue", data.metrics.availableListings)
   ].join("");
+  state.siteSettings = data.siteSettings || state.siteSettings;
+  fillSiteSettingsForm(state.siteSettings);
   qs("#bookingList").innerHTML = data.bookings.length ? data.bookings.map(bookingAdminItem).join("") : "<p>Aucune reservation.</p>";
   qs("#messageList").innerHTML = data.messages.length ? data.messages.map(messageAdminItem).join("") : "<p>Aucune requete.</p>";
   qs("#propertyAdminList").innerHTML = data.properties.length ? data.properties.map(propertyAdminItem).join("") : "<p>Aucun logement.</p>";
@@ -1000,6 +1078,8 @@ function bindEvents() {
     const editCityTile = event.target.closest("[data-edit-city-tile]");
     const cityTrigger = event.target.closest("[data-city]");
     const carouselButton = event.target.closest("[data-city-carousel]");
+    const lightboxImage = event.target.closest("[data-lightbox-image]");
+    const publicTarget = event.target.closest("[data-go-public]");
     const archiveMessage = event.target.closest("[data-message-archive]");
     const doneMessage = event.target.closest("[data-message-done]");
     const deleteMessageButton = event.target.closest("[data-message-delete]");
@@ -1011,6 +1091,12 @@ function bindEvents() {
     }
     if (scroll) qs(scroll.dataset.scroll)?.scrollIntoView({ behavior: "smooth" });
     if (detailScroll) qs(detailScroll.dataset.scrollDetail)?.scrollIntoView({ behavior: "smooth" });
+    if (lightboxImage) {
+      showImageLightbox(lightboxImage.dataset.lightboxImage, lightboxImage.dataset.lightboxCaption);
+    }
+    if (publicTarget) {
+      goPublicSection(publicTarget.dataset.goPublic);
+    }
     if (adminReceipt) {
       const booking = (window.adminBookings || []).find(item => item.id === adminReceipt.dataset.adminReceipt);
       if (booking) showReceipt(booking);
@@ -1062,6 +1148,7 @@ function bindEvents() {
   });
 
   qs("[data-close-receipt]").addEventListener("click", () => qs("#receiptModal").close());
+  qs("[data-close-lightbox]").addEventListener("click", () => qs("#imageLightbox").close());
   qs("#printReceipt").addEventListener("click", () => window.print());
   qs("#downloadReceipt").addEventListener("click", downloadReceiptPdf);
   qs("#bookingForm").addEventListener("submit", submitBooking);
@@ -1074,6 +1161,12 @@ function bindEvents() {
     if (["checkIn", "checkOut", "intent"].includes(event.target.name)) syncBookingNights();
   });
   qs("#contactForm").addEventListener("submit", submitContact);
+  qs("#siteSettingsForm").addEventListener("submit", submitSiteSettings);
+  qs("#heroImageFile").addEventListener("change", handleHeroImageFile);
+  qs("#siteSettingsForm").addEventListener("input", event => {
+    resetAdminIdleTimer();
+    if (event.target.name === "heroImage") syncHeroImagePreview();
+  });
   qs("#cityTileForm").addEventListener("submit", submitCityTile);
   qs("#newCityTileButton").addEventListener("click", resetCityTileForm);
   qs("#cityTileImageFile").addEventListener("change", handleCityTileImageFile);
