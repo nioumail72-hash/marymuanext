@@ -1,0 +1,558 @@
+{
+  "properties": [
+    {
+      "id": "prop-cocody-riviera-suite",
+      "title": "Suite Riviera Palm",
+      "category": "Suite",
+      "intent": "location",
+      "district": "Cocody Riviera",
+      "city": "Abidjan",
+      "price": 85000,
+      "salePrice": null,
+      "rating": 4.9,
+      "beds": 2,
+      "baths": 2,
+      "surface": 92,
+      "guests": 4,
+      "availability": "Disponible aujourd'hui",
+      "status": "Disponible",
+      "image": "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=900&q=80",
+        "https://images.unsplash.com/photo-1600210492493-0946911123ea?auto=format&fit=crop&w=900&q=80"
+      ],
+      "amenities": [
+        "Climatisation",
+        "WiFi fibre",
+        "Parking",
+        "Piscine",
+        "Menage"
+      ],
+      "paymentMethods": [
+        "Mobile Money",
+        "Carte bancaire",
+        "Virement"
+      ],
+      "description": "Suite haut standing proche des restaurants, ambassades et axes rapides de Cocody."
+    },
+    {
+      "id": "prop-plateau-penthouse",
+      "title": "Penthouse Lagune Plateau",
+      "category": "Penthouse",
+      "intent": "location",
+      "district": "Plateau",
+      "city": "Abidjan",
+      "price": 260000,
+      "salePrice": null,
+      "rating": 5,
+      "beds": 4,
+      "baths": 4,
+      "surface": 260,
+      "guests": 8,
+      "availability": "Visite sur rendez-vous",
+      "status": "Premium",
+      "image": "https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1600607687644-aac4c3eac7f4?auto=format&fit=crop&w=900&q=80",
+        "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=900&q=80"
+      ],
+      "amenities": [
+        "Vue lagune",
+        "Conciergerie",
+        "Salle de sport",
+        "Ascenseur prive",
+        "Securite 24/7"
+      ],
+      "paymentMethods": [
+        "Carte bancaire",
+        "Virement",
+        "Cheque certifie"
+      ],
+      "description": "Adresse signature avec terrasse panoramique, service concierge et securite renforcee."
+    },
+    {
+      "id": "prop-marcory-appartement",
+      "title": "Appartement Marcory Business",
+      "category": "Appartement",
+      "intent": "location",
+      "district": "Marcory Zone 4",
+      "city": "Abidjan",
+      "price": 65000,
+      "salePrice": null,
+      "rating": 4.7,
+      "beds": 3,
+      "baths": 2,
+      "surface": 118,
+      "guests": 6,
+      "availability": "Disponible cette semaine",
+      "status": "Populaire",
+      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=900&q=80",
+        "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=900&q=80"
+      ],
+      "amenities": [
+        "Cuisine equipee",
+        "WiFi",
+        "Groupe electrogene",
+        "Parking",
+        "Gardien"
+      ],
+      "paymentMethods": [
+        "Mobile Money",
+        "Especes a l'agence",
+        "Carte bancaire"
+      ],
+      "description": "Appartement meuble ideal pour missions professionnelles, familles et sejours moyens."
+    },
+    {
+      "id": "prop-angre-studio",
+      "title": "Studio Angre Connect",
+      "category": "Studio",
+      "intent": "location",
+      "district": "Angre 8e Tranche",
+      "city": "Abidjan",
+      "price": 28000,
+      "salePrice": null,
+      "rating": 4.6,
+      "beds": 1,
+      "baths": 1,
+      "surface": 36,
+      "guests": 2,
+      "availability": "Entree autonome",
+      "status": "Budget",
+      "image": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=900&q=80",
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80"
+      ],
+      "amenities": [
+        "WiFi fibre",
+        "Climatisation",
+        "Cuisine compacte",
+        "Netflix",
+        "Eau chaude"
+      ],
+      "paymentMethods": [
+        "Mobile Money",
+        "Carte bancaire"
+      ],
+      "description": "Studio pratique pour jeunes actifs, consultants et courts sejours a Cocody-Angre."
+    },
+    {
+      "id": "prop-bingerville-etudiant",
+      "title": "Residence Etudiante Bingerville",
+      "category": "Logement etudiant",
+      "intent": "location",
+      "district": "Bingerville",
+      "city": "Abidjan",
+      "price": 15000,
+      "salePrice": null,
+      "rating": 4.4,
+      "beds": 1,
+      "baths": 1,
+      "surface": 22,
+      "guests": 1,
+      "availability": "Dossiers ouverts",
+      "status": "Etudiant",
+      "image": "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1560448204-603b3fc33ddc?auto=format&fit=crop&w=900&q=80",
+        "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=900&q=80"
+      ],
+      "amenities": [
+        "Bureau",
+        "WiFi",
+        "Buanderie",
+        "Gardien",
+        "Proche campus"
+      ],
+      "paymentMethods": [
+        "Mobile Money",
+        "Virement"
+      ],
+      "description": "Chambres equipees avec forfait mensuel, suivi dossier garant et proximite campus."
+    },
+    {
+      "id": "prop-assinie-villa-vente",
+      "title": "Villa Assinie Signature",
+      "category": "Appartement",
+      "intent": "vente",
+      "district": "Assinie Mafia",
+      "city": "Sud-Comoe",
+      "price": 180000,
+      "salePrice": 185000000,
+      "rating": 4.8,
+      "beds": 5,
+      "baths": 5,
+      "surface": 420,
+      "guests": 10,
+      "availability": "Vente et location",
+      "status": "A vendre",
+      "image": "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=900&q=80",
+        "https://images.unsplash.com/photo-1600607688960-e095ff83135c?auto=format&fit=crop&w=900&q=80"
+      ],
+      "amenities": [
+        "Piscine",
+        "Jardin",
+        "Acces plage",
+        "Cuisine equipee",
+        "Titre foncier"
+      ],
+      "paymentMethods": [
+        "Virement",
+        "Cheque certifie",
+        "Paiement echelonne"
+      ],
+      "description": "Bien d'exception disponible a l'achat avec accompagnement juridique et fiscal."
+    },
+    {
+      "id": "prop-bouake-appartement-centre",
+      "title": "Appartement Bouake Centre",
+      "category": "Appartement",
+      "intent": "location",
+      "district": "Bouake Centre",
+      "city": "Bouake",
+      "price": 42000,
+      "salePrice": null,
+      "rating": 4.6,
+      "beds": 3,
+      "baths": 2,
+      "surface": 96,
+      "guests": 5,
+      "availability": "Disponible cette semaine",
+      "status": "Nouveau",
+      "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=900&q=80",
+        "https://images.unsplash.com/photo-1600210491892-03d54c0aaf87?auto=format&fit=crop&w=900&q=80"
+      ],
+      "amenities": [
+        "WiFi",
+        "Parking",
+        "Cuisine equipee",
+        "Gardien",
+        "Balcon"
+      ],
+      "paymentMethods": [
+        "Mobile Money",
+        "Carte bancaire",
+        "Virement"
+      ],
+      "description": "Appartement meuble au centre de Bouake pour missions professionnelles, familles et sejours moyens."
+    },
+    {
+      "id": "prop-san-pedro-studio-port",
+      "title": "Studio San Pedro Port",
+      "category": "Studio",
+      "intent": "location",
+      "district": "Quartier Port",
+      "city": "San Pedro",
+      "price": 32000,
+      "salePrice": null,
+      "rating": 4.5,
+      "beds": 1,
+      "baths": 1,
+      "surface": 38,
+      "guests": 2,
+      "availability": "Entree autonome",
+      "status": "Business",
+      "image": "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80",
+        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80"
+      ],
+      "amenities": [
+        "Climatisation",
+        "WiFi",
+        "Eau chaude",
+        "Proche port",
+        "Menage"
+      ],
+      "paymentMethods": [
+        "Mobile Money",
+        "Virement"
+      ],
+      "description": "Studio pratique pour consultants, equipes portuaires et courts sejours a San Pedro."
+    },
+    {
+      "id": "prop-daloa-etudiant",
+      "title": "Logement Etudiant Daloa Campus",
+      "category": "Logement etudiant",
+      "intent": "location",
+      "district": "Quartier Campus",
+      "city": "Daloa",
+      "price": 12000,
+      "salePrice": null,
+      "rating": 4.3,
+      "beds": 1,
+      "baths": 1,
+      "surface": 20,
+      "guests": 1,
+      "availability": "Dossiers ouverts",
+      "status": "Etudiant",
+      "image": "https://images.unsplash.com/photo-1560448204-603b3fc33ddc?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=900&q=80",
+        "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=900&q=80"
+      ],
+      "amenities": [
+        "Bureau",
+        "WiFi",
+        "Buanderie",
+        "Gardien",
+        "Proche campus"
+      ],
+      "paymentMethods": [
+        "Mobile Money",
+        "Virement"
+      ],
+      "description": "Chambre equipee pour etudiants a Daloa, avec suivi du dossier et proximite du campus."
+    }
+  ],
+  "cityTiles": [
+    {
+      "id": "city-abidjan",
+      "name": "Abidjan",
+      "search": "Abidjan",
+      "subtitle": "Cocody, Plateau, Marcory, Angre",
+      "image": "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=80",
+      "status": "Capitale economique"
+    },
+    {
+      "id": "city-bouake",
+      "name": "Bouake",
+      "search": "Bouake",
+      "subtitle": "Centre, commerce et missions interieures",
+      "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80",
+      "status": "Centre du pays"
+    },
+    {
+      "id": "city-san-pedro",
+      "name": "San Pedro",
+      "search": "San Pedro",
+      "subtitle": "Port, affaires et courts sejours",
+      "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+      "status": "Zone portuaire"
+    },
+    {
+      "id": "city-daloa",
+      "name": "Daloa",
+      "search": "Daloa",
+      "subtitle": "Campus, sejours et logements accessibles",
+      "image": "https://images.unsplash.com/photo-1560448204-603b3fc33ddc?auto=format&fit=crop&w=1200&q=80",
+      "status": "Ville universitaire"
+    },
+    {
+      "id": "city-yamoussoukro",
+      "name": "Yamoussoukro",
+      "search": "Yamoussoukro",
+      "subtitle": "Sejours administratifs et visites",
+      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+      "status": "Capitale politique"
+    },
+    {
+      "id": "city-korhogo",
+      "name": "Korhogo",
+      "search": "Korhogo",
+      "subtitle": "Nord, affaires et missions longues",
+      "image": "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=80",
+      "status": "Grand Nord"
+    }
+  ],
+  "bookings": [
+    {
+      "id": "14f1b780-0be6-4025-b563-36001e3f153a",
+      "orderNumber": "HBCIV-20260706-5C9E9C",
+      "invoiceNumber": "FAC-20260706-813B",
+      "createdAt": "2026-07-06T00:47:11.222Z",
+      "status": "Terminee",
+      "paymentStatus": "Paiement initie",
+      "propertyId": "prop-cocody-riviera-suite",
+      "propertyTitle": "Suite Riviera Palm",
+      "propertyCategory": "Suite",
+      "intent": "location",
+      "client": {
+        "name": "JJJ",
+        "phone": "0809090790",
+        "email": "U@i.vb",
+        "nationality": "Cote d'Ivoire"
+      },
+      "stay": {
+        "checkIn": "2026-07-07",
+        "checkOut": "2026-07-08",
+        "nights": 1,
+        "guests": 2
+      },
+      "payment": {
+        "method": "Carte bancaire",
+        "reference": "",
+        "base": 85000,
+        "serviceFee": 6800,
+        "securityDeposit": 29750,
+        "total": 121550,
+        "currency": "FCFA"
+      },
+      "request": "",
+      "adminNotes": []
+    },
+    {
+      "id": "ba8b5092-6d37-40de-bcb6-e9f3aa0484e2",
+      "orderNumber": "HBCIV-20260706-B93A0F",
+      "invoiceNumber": "FAC-20260706-0AA6",
+      "createdAt": "2026-07-06T00:36:10.604Z",
+      "status": "Terminee",
+      "paymentStatus": "Paiement initie",
+      "propertyId": "prop-cocody-riviera-suite",
+      "propertyTitle": "Suite Riviera Palm",
+      "propertyCategory": "Suite",
+      "intent": "location",
+      "client": {
+        "name": "s",
+        "phone": "999999",
+        "email": "op@op.cv",
+        "nationality": "Cote d'Ivoire"
+      },
+      "stay": {
+        "checkIn": "2026-07-07",
+        "checkOut": "2026-07-10",
+        "nights": 3,
+        "guests": 2
+      },
+      "payment": {
+        "method": "Mobile Money",
+        "reference": "",
+        "base": 255000,
+        "serviceFee": 20400,
+        "securityDeposit": 29750,
+        "total": 305150,
+        "currency": "FCFA"
+      },
+      "request": "",
+      "adminNotes": []
+    },
+    {
+      "id": "38d2c35b-b23f-4136-bcad-7fe33d09076e",
+      "orderNumber": "HBCIV-20260706-1C571D",
+      "invoiceNumber": "FAC-20260706-1801",
+      "createdAt": "2026-07-06T00:27:16.686Z",
+      "status": "Terminee",
+      "paymentStatus": "Paye",
+      "propertyId": "prop-bingerville-etudiant",
+      "propertyTitle": "Residence Etudiante Bingerville",
+      "propertyCategory": "Logement etudiant",
+      "intent": "location",
+      "client": {
+        "name": "T2",
+        "phone": "09999999",
+        "email": "t2@yp.com",
+        "nationality": "Cote d'Ivoire"
+      },
+      "stay": {
+        "checkIn": "2026-07-07",
+        "checkOut": "2026-07-20",
+        "nights": 13,
+        "guests": 1
+      },
+      "payment": {
+        "method": "Paiement a l'agence",
+        "reference": "",
+        "base": 195000,
+        "serviceFee": 15600,
+        "securityDeposit": 5250,
+        "total": 215850,
+        "currency": "FCFA"
+      },
+      "request": "b",
+      "adminNotes": []
+    },
+    {
+      "id": "bac4b066-426d-4a53-ab26-e450af077bd2",
+      "orderNumber": "HBCIV-20260706-E0001E",
+      "invoiceNumber": "FAC-20260706-F2B0",
+      "createdAt": "2026-07-06T00:08:14.338Z",
+      "status": "Terminee",
+      "paymentStatus": "Paiement initie",
+      "propertyId": "prop-cocody-riviera-suite",
+      "propertyTitle": "Suite Riviera Palm",
+      "propertyCategory": "Suite",
+      "intent": "location",
+      "client": {
+        "name": "test",
+        "phone": "09090909",
+        "email": "o@o.com",
+        "nationality": "Cote d'Ivoire"
+      },
+      "stay": {
+        "checkIn": "2026-07-08",
+        "checkOut": "2026-07-10",
+        "nights": 2,
+        "guests": 1
+      },
+      "payment": {
+        "method": "Mobile Money",
+        "reference": "",
+        "base": 170000,
+        "serviceFee": 13600,
+        "securityDeposit": 29750,
+        "total": 213350,
+        "currency": "FCFA"
+      },
+      "request": "arrivée tardive",
+      "adminNotes": []
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg-demo-1",
+      "createdAt": "2026-07-05T23:31:42.971Z",
+      "name": "Awa K.",
+      "phone": "+225 07 00 00 00 00",
+      "email": "awa@example.com",
+      "subject": "Visite a Cocody",
+      "message": "Bonjour, je veux visiter une suite a Cocody ce week-end.",
+      "status": "Traite",
+      "priority": "Normale"
+    }
+  ],
+  "payments": [
+    {
+      "id": "de9e4d75-37de-40d2-8aa8-e6c1795aa361",
+      "bookingId": "14f1b780-0be6-4025-b563-36001e3f153a",
+      "orderNumber": "HBCIV-20260706-5C9E9C",
+      "amount": 121550,
+      "method": "Carte bancaire",
+      "status": "Paiement initie",
+      "createdAt": "2026-07-06T00:47:11.222Z"
+    },
+    {
+      "id": "cd703b0a-2239-4b77-b2c2-eea01263ff0b",
+      "bookingId": "ba8b5092-6d37-40de-bcb6-e9f3aa0484e2",
+      "orderNumber": "HBCIV-20260706-B93A0F",
+      "amount": 305150,
+      "method": "Mobile Money",
+      "status": "Paiement initie",
+      "createdAt": "2026-07-06T00:36:10.604Z"
+    },
+    {
+      "id": "786f0643-1fe3-4784-a39c-346a79685909",
+      "bookingId": "38d2c35b-b23f-4136-bcad-7fe33d09076e",
+      "orderNumber": "HBCIV-20260706-1C571D",
+      "amount": 215850,
+      "method": "Paiement a l'agence",
+      "status": "Paye",
+      "createdAt": "2026-07-06T00:27:16.686Z"
+    },
+    {
+      "id": "c27b4c05-b652-4b1a-8f63-3f584f701b47",
+      "bookingId": "bac4b066-426d-4a53-ab26-e450af077bd2",
+      "orderNumber": "HBCIV-20260706-E0001E",
+      "amount": 213350,
+      "method": "Mobile Money",
+      "status": "Paiement initie",
+      "createdAt": "2026-07-06T00:08:14.338Z"
+    }
+  ]
+}

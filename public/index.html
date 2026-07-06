@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>hebergementciv | Location et vente de maisons en Cote d'Ivoire</title>
+    <meta name="description" content="hebergementciv, portail immobilier fullstack pour louer, acheter et reserver des logements en Cote d'Ivoire.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#accueil" aria-label="hebergementciv accueil">
+          <span class="brand-mark">hc</span>
+          <span>hebergementciv</span>
+        </a>
+        <nav class="desktop-nav" aria-label="Navigation principale">
+          <a href="#couverture">Villes</a>
+          <a href="#biens">Biens</a>
+          <a href="#reservation">Reservation</a>
+          <a href="#paiements">Paiements</a>
+          <a href="#contact">Contact</a>
+        </nav>
+        <div class="top-actions">
+          <button class="primary-button" data-scroll="#reservation">Reserver</button>
+        </div>
+      </header>
+
+      <main id="publicView">
+        <section class="hero" id="accueil">
+          <div class="hero-bg" role="img" aria-label="Vue moderne d'Abidjan et logements premium"></div>
+          <div class="hero-overlay"></div>
+          <div class="hero-content">
+            <p class="eyebrow">Abidjan, Cote d'Ivoire - FCFA - location & vente</p>
+            <h1>hebergementciv</h1>
+            <p class="hero-copy">Une plateforme immobiliere complete pour trouver, reserver, payer et suivre des logements fiables a Abidjan et partout en Cote d'Ivoire.</p>
+            <form class="search-panel" id="heroSearch">
+              <label>
+                <span>Categorie</span>
+                <select name="category">
+                  <option value="">Toutes</option>
+                  <option>Appartement</option>
+                  <option>Studio</option>
+                  <option>Suite</option>
+                  <option>Penthouse</option>
+                  <option>Logement etudiant</option>
+                </select>
+              </label>
+              <label>
+                <span>Quartier</span>
+                <input name="location" placeholder="Cocody, Plateau, Marcory...">
+              </label>
+              <label>
+                <span>Objectif</span>
+                <select name="intent">
+                  <option value="">Location ou vente</option>
+                  <option value="location">Location</option>
+                  <option value="vente">Vente</option>
+                </select>
+              </label>
+              <button type="submit">Rechercher</button>
+            </form>
+          </div>
+          <div class="hero-strip" aria-label="Indicateurs">
+            <span><strong id="statListings">0</strong> biens verifies</span>
+            <span><strong>24/7</strong> demandes suivies</span>
+            <span><strong>FCFA</strong> factures & recus</span>
+          </div>
+        </section>
+
+        <section class="category-rail" aria-label="Categories">
+          <button data-category="Appartement">Appartement</button>
+          <button data-category="Studio">Studio</button>
+          <button data-category="Suite">Suite</button>
+          <button data-category="Penthouse">Penthouse</button>
+          <button data-category="Logement etudiant">Logement etudiant</button>
+        </section>
+
+        <section class="city-carousel-section" id="couverture">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Couverture nationale</p>
+              <h2>Explorez les logements par grande ville.</h2>
+            </div>
+            <button class="outline-button" data-city="">Voir toute la Cote d'Ivoire</button>
+          </div>
+          <p class="city-carousel-copy">Choisissez une ville pour afficher directement les logements disponibles dans cette zone. La plateforme accompagne les sejours, les missions professionnelles, les logements etudiants et les projets d'achat dans tout le pays.</p>
+          <div class="city-carousel-shell">
+            <button class="carousel-arrow" type="button" data-city-carousel="prev" aria-label="Ville precedente">‹</button>
+            <div class="city-carousel" id="cityCarousel" aria-label="Villes disponibles"></div>
+            <button class="carousel-arrow" type="button" data-city-carousel="next" aria-label="Ville suivante">›</button>
+          </div>
+        </section>
+
+        <section class="market-section" id="biens">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Catalogue dynamique</p>
+              <h2>Biens disponibles maintenant</h2>
+            </div>
+            <div class="view-switch" role="group" aria-label="Type d'offre">
+              <button class="active" data-intent="">Tout</button>
+              <button data-intent="location">Location</button>
+              <button data-intent="vente">Vente</button>
+            </div>
+          </div>
+
+          <div class="market-layout">
+            <aside class="filters" aria-label="Filtres">
+              <label>
+                <span>Budget max / nuit</span>
+                <input id="priceRange" type="range" min="15000" max="300000" step="5000" value="300000">
+                <output id="priceOutput">300 000 FCFA</output>
+              </label>
+              <label>
+                <span>Recherche rapide</span>
+                <input id="quickSearch" placeholder="Zone 4, Bingerville, Assinie...">
+              </label>
+              <div>
+                <span class="filter-title">Services attendus</span>
+                <label class="check"><input type="checkbox" value="WiFi"> WiFi</label>
+                <label class="check"><input type="checkbox" value="Parking"> Parking</label>
+                <label class="check"><input type="checkbox" value="Piscine"> Piscine</label>
+                <label class="check"><input type="checkbox" value="Securite"> Securite 24/7</label>
+              </div>
+            </aside>
+            <div class="property-grid" id="propertyGrid"></div>
+          </div>
+        </section>
+
+        <section class="split-section" id="reservation">
+          <div class="story-panel">
+            <p class="eyebrow">Parcours client</p>
+            <h2>Reservation avec numero de commande et facture automatique.</h2>
+            <p>Le client choisit un bien, renseigne ses dates, son moyen de paiement et recoit instantanement un recu imprimable avec reference de commande.</p>
+            <div class="steps">
+              <span>1. Choix du logement</span>
+              <span>2. Paiement Mobile Money, carte, virement ou agence</span>
+              <span>3. Notre equipe suit votre demande et la traite rapidement</span>
+            </div>
+          </div>
+          <form class="booking-card" id="bookingForm">
+            <h3>Faire une reservation</h3>
+            <label>Bien choisi<select name="propertyId" id="bookingProperty"></select></label>
+            <div class="booking-property-preview" id="bookingPropertyPreview" aria-live="polite"></div>
+            <div class="two-cols">
+              <label>Nom complet<input name="name" required minlength="2" maxlength="80" autocomplete="name" placeholder="Nom du client"></label>
+              <label>Telephone<input name="phone" type="tel" required inputmode="tel" minlength="8" maxlength="24" pattern="^[+0-9][0-9 +().-]{7,23}$" autocomplete="tel" placeholder="+225 07 00 00 00 00"></label>
+            </div>
+            <div class="two-cols">
+              <label>Email<input name="email" type="email" maxlength="120" autocomplete="email" placeholder="client@email.com"></label>
+              <label>Nationalite<input name="nationality" minlength="2" maxlength="60" value="Cote d'Ivoire"></label>
+            </div>
+            <div class="two-cols">
+              <label>Arrivee<input name="checkIn" type="date" required></label>
+              <label>Depart<input name="checkOut" type="date" required></label>
+            </div>
+            <div class="two-cols">
+              <label>Nuits<input name="nights" type="number" min="1" max="365" step="1" value="2" readonly></label>
+              <label>Voyageurs<input name="guests" type="number" min="1" max="20" step="1" value="2" inputmode="numeric"></label>
+            </div>
+            <div class="two-cols">
+              <label>Operation<select name="intent"><option value="location">Location</option><option value="vente">Achat</option></select></label>
+              <label>Paiement<select name="paymentMethod"><option>Mobile Money</option><option>Carte bancaire</option><option>Virement</option><option>Paiement a l'agence</option><option>Cheque certifie</option></select></label>
+            </div>
+            <label>Note ou requete<textarea name="message" rows="3" maxlength="800" placeholder="Besoin d'une visite, facture entreprise, arrivee tardive..."></textarea></label>
+            <button class="primary-button full" type="submit">Valider la reservation</button>
+          </form>
+        </section>
+
+        <section class="payment-section" id="paiements">
+          <div>
+            <p class="eyebrow">Gestion paiements</p>
+            <h2>Moyens de paiement prevus pour le marche ivoirien.</h2>
+          </div>
+          <div class="payment-grid">
+            <article><strong>Mobile Money</strong><span>Orange Money, MTN MoMo, Moov Money avec reference de transaction.</span></article>
+            <article><strong>Carte bancaire</strong><span>Carte Visa/Mastercard via passerelle locale ou internationale.</span></article>
+            <article><strong>Virement bancaire</strong><span>Reservation bloquee apres validation de preuve de paiement.</span></article>
+            <article><strong>Agence & cheque</strong><span>Paiement physique, cheque certifie et dossier achat.</span></article>
+          </div>
+        </section>
+
+        <section class="contact-section" id="contact">
+          <div>
+            <p class="eyebrow">Demandes et requetes</p>
+            <h2>Notre equipe suit votre demande et la traitera tres rapidement.</h2>
+          </div>
+          <form class="contact-form" id="contactForm">
+            <div class="two-cols">
+              <label>Nom<input name="name" required minlength="2" maxlength="80" autocomplete="name"></label>
+              <label>Telephone<input name="phone" type="tel" required inputmode="tel" minlength="8" maxlength="24" pattern="^[+0-9][0-9 +().-]{7,23}$" autocomplete="tel"></label>
+            </div>
+            <div class="two-cols">
+              <label>Email<input name="email" type="email" maxlength="120" autocomplete="email"></label>
+              <label>Sujet<input name="subject" maxlength="120" placeholder="Visite, achat, support..."></label>
+            </div>
+            <label>Message<textarea name="message" rows="4" required minlength="5" maxlength="1000"></textarea></label>
+            <button class="primary-button" type="submit">Envoyer la demande</button>
+          </form>
+        </section>
+
+      </main>
+
+      <main class="detail-page is-hidden" id="detailView" aria-live="polite"></main>
+
+      <main class="admin-page is-hidden" id="adminView">
+        <section class="admin-section" id="marymua">
+          <div class="admin-heading">
+            <div>
+              <p class="eyebrow">marymua</p>
+              <h2>Console privee hebergementciv</h2>
+            </div>
+            <form class="admin-login" id="adminLogin">
+              <span class="notification-pill" id="notificationBadge">0 demande</span>
+              <button class="outline-button" type="button" id="enableNotifications">Activer alertes</button>
+              <input name="password" type="password" placeholder="Mot de passe demo: marymua123">
+              <button type="submit">Entrer</button>
+            </form>
+          </div>
+          <div class="admin-dashboard locked" id="adminDashboard">
+            <div class="metric-grid" id="metricGrid"></div>
+            <div class="city-tile-manager">
+              <div>
+                <h3>Vignettes villes</h3>
+                <div class="admin-list city-tile-list" id="cityTileList"></div>
+              </div>
+              <form class="city-tile-form" id="cityTileForm">
+                <input type="hidden" name="id">
+                <div class="form-title-row">
+                  <div>
+                    <p class="eyebrow">Carrousel public</p>
+                    <h3 id="cityTileFormTitle">Ajouter une ville</h3>
+                  </div>
+                  <button class="outline-button" type="button" id="newCityTileButton">Nouveau</button>
+                </div>
+                <div class="form-grid">
+                  <label>Ville<input name="name" required minlength="2" maxlength="80" placeholder="Bouake"></label>
+                  <label>Recherche associee<input name="search" required minlength="2" maxlength="80" placeholder="Bouake ou Sud-Comoe"></label>
+                  <label>Badge<input name="status" required maxlength="80" value="Destination"></label>
+                  <label>Image URL<input name="image" type="text" required maxlength="1200000" placeholder="https://... ou image choisie"></label>
+                </div>
+                <label>Importer image ville<input id="cityTileImageFile" type="file" accept="image/png,image/jpeg,image/webp"></label>
+                <label>Sous-titre<textarea name="subtitle" rows="3" required minlength="4" maxlength="160" placeholder="Courte phrase visible sur la vignette"></textarea></label>
+                <div class="image-admin-preview" id="cityTileImagePreview" aria-live="polite"></div>
+                <button class="primary-button" type="submit">Enregistrer la vignette</button>
+              </form>
+            </div>
+            <div class="admin-property-manager">
+              <div>
+                <h3>Catalogue logements</h3>
+                <div class="admin-list property-admin-list" id="propertyAdminList"></div>
+              </div>
+              <form class="property-admin-form" id="propertyAdminForm">
+                <input type="hidden" name="id">
+                <div class="form-title-row">
+                  <div>
+                    <p class="eyebrow">Fiche detaillee</p>
+                    <h3 id="propertyFormTitle">Ajouter un logement</h3>
+                  </div>
+                  <button class="outline-button" type="button" id="newPropertyButton">Nouveau</button>
+                </div>
+                <div class="form-grid">
+                  <label>Titre<input name="title" required minlength="3" maxlength="120" placeholder="Suite Riviera Palm"></label>
+                  <label>Categorie<select name="category" required>
+                    <option>Appartement</option>
+                    <option>Studio</option>
+                    <option>Suite</option>
+                    <option>Penthouse</option>
+                    <option>Logement etudiant</option>
+                  </select></label>
+                  <label>Operation<select name="intent" required>
+                    <option value="location">Location</option>
+                    <option value="vente">Vente</option>
+                  </select></label>
+                  <label>Statut<input name="status" required maxlength="60" value="Disponible"></label>
+                  <label>Quartier<input name="district" required minlength="2" maxlength="80" placeholder="Cocody Riviera"></label>
+                  <label>Ville<input name="city" required minlength="2" maxlength="80" value="Abidjan"></label>
+                  <label>Prix / nuit FCFA<input name="price" type="number" required min="1000" max="500000000" step="500" inputmode="numeric"></label>
+                  <label>Prix de vente FCFA<input name="salePrice" type="number" min="0" max="5000000000" step="50000" inputmode="numeric" placeholder="Optionnel"></label>
+                  <label>Chambres<input name="beds" type="number" min="0" max="30" step="1" value="1" inputmode="numeric"></label>
+                  <label>Salles de bains<input name="baths" type="number" min="0" max="30" step="1" value="1" inputmode="numeric"></label>
+                  <label>Surface m2<input name="surface" type="number" required min="1" max="5000" step="1" inputmode="numeric"></label>
+                  <label>Voyageurs max<input name="guests" type="number" required min="1" max="100" step="1" inputmode="numeric"></label>
+                  <label>Note<input name="rating" type="number" min="1" max="5" step="0.1" value="4.8" inputmode="decimal"></label>
+                  <label>Disponibilite<input name="availability" maxlength="120" value="Disponible sur demande"></label>
+                </div>
+                <label>Image principale URL<input name="image" type="text" required maxlength="1200000" placeholder="https://... ou image choisie"></label>
+                <label>Importer image principale<input id="mainImageFile" type="file" accept="image/png,image/jpeg,image/webp"></label>
+                <label>Galerie images URL<textarea name="gallery" rows="3" maxlength="4000000" placeholder="Une URL par ligne, ou utilisez les fichiers ci-dessous"></textarea></label>
+                <label>Importer galerie<input id="galleryImageFiles" type="file" accept="image/png,image/jpeg,image/webp" multiple></label>
+                <div class="image-admin-preview" id="imageAdminPreview" aria-live="polite"></div>
+                <label>Description<textarea name="description" rows="4" required minlength="20" maxlength="1200" placeholder="Presentation complete du logement"></textarea></label>
+                <div class="form-grid two">
+                  <label>Equipements<textarea name="amenities" rows="4" required maxlength="1200" placeholder="WiFi fibre&#10;Parking&#10;Climatisation"></textarea></label>
+                  <label>Points forts<textarea name="highlights" rows="4" maxlength="1200" placeholder="Excellent emplacement&#10;Vue degagee&#10;Entree autonome"></textarea></label>
+                  <label>Regles de la maison<textarea name="houseRules" rows="4" maxlength="1400" placeholder="Piece d'identite requise&#10;Respect du voisinage"></textarea></label>
+                  <label>Moyens de paiement<textarea name="paymentMethods" rows="4" maxlength="600" placeholder="Mobile Money&#10;Carte bancaire&#10;Virement"></textarea></label>
+                </div>
+                <button class="primary-button" type="submit">Enregistrer la fiche</button>
+              </form>
+            </div>
+            <div class="admin-columns">
+              <div>
+                <h3>Reservations clients</h3>
+                <div class="admin-list" id="bookingList"></div>
+              </div>
+              <div>
+                <h3>Requetes entrantes</h3>
+                <div class="admin-list" id="messageList"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog class="receipt-modal" id="receiptModal">
+      <button class="modal-close" data-close-receipt aria-label="Fermer">x</button>
+      <div id="receiptContent"></div>
+      <div class="receipt-actions">
+        <button class="outline-button" id="printReceipt">Imprimer</button>
+        <button class="primary-button" id="downloadReceipt">Telecharger le PDF</button>
+      </div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="/app.js"></script>
+  </body>
+</html>
