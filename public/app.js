@@ -1095,6 +1095,7 @@ function bindEvents() {
       showImageLightbox(lightboxImage.dataset.lightboxImage, lightboxImage.dataset.lightboxCaption);
     }
     if (publicTarget) {
+      event.preventDefault();
       goPublicSection(publicTarget.dataset.goPublic);
     }
     if (adminReceipt) {
