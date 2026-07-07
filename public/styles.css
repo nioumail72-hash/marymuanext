@@ -1060,6 +1060,11 @@ textarea {
   min-height: 0;
 }
 
+.gallery-stack button,
+.gallery-thumbs button {
+  aspect-ratio: 16 / 10;
+}
+
 .gallery-zoom {
   cursor: zoom-in;
   display: block;
@@ -1932,6 +1937,11 @@ textarea {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .gallery-stack button,
+  .gallery-thumbs button {
+    min-height: 180px;
+  }
+
   .mini-map {
     min-height: 160px;
   }
@@ -2043,7 +2053,12 @@ textarea {
   .booking-preview-thumbs,
   .gallery-stack,
   .gallery-thumbs {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gallery-stack button,
+  .gallery-thumbs button {
+    min-height: 150px;
   }
 
   .booking-detail {
@@ -2206,6 +2221,17 @@ textarea {
   .detail-gallery {
     gap: 8px;
     grid-template-rows: minmax(220px, 68vw) auto auto auto;
+  }
+
+  .gallery-stack,
+  .gallery-thumbs {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery-stack button,
+  .gallery-thumbs button {
+    aspect-ratio: 16 / 9;
+    min-height: 180px;
   }
 
   .review-score {
