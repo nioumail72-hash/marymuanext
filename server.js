@@ -2,12 +2,33 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const { MongoClient } = require("mongodb");
+const { v2: cloudinary } = require("cloudinary");
 
 const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
 const PUBLIC_DIR = path.join(ROOT, "public");
 const DATA_DIR = path.join(ROOT, "data");
 const DB_FILE = path.join(DATA_DIR, "db.json");
+const MONGODB_URI = process.env.MONGODB_URI || "";
+const MONGODB_DB_NAME = process.env.MONGODB_DB_NAME || "hebergementciv";
+const MONGODB_COLLECTION = process.env.MONGODB_COLLECTION || "site_state";
+const CLOUDINARY_FOLDER = process.env.CLOUDINARY_FOLDER || "hebergementciv";
+const hasMongo = Boolean(MONGODB_URI);
+const hasCloudinary = Boolean(
+  process.env.CLOUDINARY_CLOUD_NAME &&
+  process.env.CLOUDINARY_API_KEY &&
+  process.env.CLOUDINARY_API_SECRET
+);
+
+if (hasCloudinary) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure: true
+  });
+}
 
 const ADMIN_TOKEN = "hebergementciv-admin";
 const PAYMENT_METHODS = new Set([
@@ -346,16 +367,68 @@ function ensureDb() {
   }
 }
 
+function normalizeDb(db = {}) {
+  return {
+    properties: Array.isArray(db.properties) ? db.properties : seedProperties,
+    cityTiles: Array.isArray(db.cityTiles) ? db.cityTiles : seedCityTiles,
+    siteSettings: db.siteSettings || seedSiteSettings,
+    bookings: Array.isArray(db.bookings) ? db.bookings : [],
+    messages: Array.isArray(db.messages) ? db.messages : [],
+    payments: Array.isArray(db.payments) ? db.payments : []
+  };
+}
+
 function readDb() {
   ensureDb();
-  const db = JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
-  if (!Array.isArray(db.cityTiles)) db.cityTiles = seedCityTiles;
-  if (!db.siteSettings) db.siteSettings = seedSiteSettings;
-  return db;
+  return normalizeDb(JSON.parse(fs.readFileSync(DB_FILE, "utf8")));
 }
 
 function writeDb(db) {
   fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+}
+
+let mongoClientPromise = null;
+
+async function getMongoCollection() {
+  if (!hasMongo) return null;
+  if (!mongoClientPromise) {
+    const client = new MongoClient(MONGODB_URI);
+    mongoClientPromise = client.connect();
+  }
+  const client = await mongoClientPromise;
+  return client.db(MONGODB_DB_NAME).collection(MONGODB_COLLECTION);
+}
+
+async function loadDb() {
+  if (!hasMongo) return readDb();
+  const collection = await getMongoCollection();
+  const stored = await collection.findOne({ _id: "main" });
+  if (stored) {
+    const { _id, ...db } = stored;
+    return normalizeDb(db);
+  }
+  const initialDb = readDb();
+  await collection.updateOne(
+    { _id: "main" },
+    { $set: { ...initialDb, updatedAt: new Date().toISOString() } },
+    { upsert: true }
+  );
+  return initialDb;
+}
+
+async function saveDb(db) {
+  const normalized = normalizeDb(db);
+  if (!hasMongo) {
+    writeDb(normalized);
+    return normalized;
+  }
+  const collection = await getMongoCollection();
+  await collection.updateOne(
+    { _id: "main" },
+    { $set: { ...normalized, updatedAt: new Date().toISOString() } },
+    { upsert: true }
+  );
+  return normalized;
 }
 
 function sendJson(res, status, data) {
@@ -451,6 +524,59 @@ function cleanUrl(value, max = 600) {
   } catch (error) {
     return "";
   }
+}
+
+function isDataImage(value) {
+  return /^data:image\/(png|jpe?g|webp);base64,[a-z0-9+/=]+$/i.test(String(value || ""));
+}
+
+async function uploadImageIfNeeded(value, folder, label = "image") {
+  const image = String(value || "").trim();
+  if (!image || !isDataImage(image)) return image;
+  if (!hasCloudinary && hasMongo) {
+    throw new Error(`Cloudinary doit etre configure pour importer ${label}`);
+  }
+  if (!hasCloudinary) return image;
+  try {
+    const result = await cloudinary.uploader.upload(image, {
+      folder: `${CLOUDINARY_FOLDER}/${folder}`,
+      resource_type: "image",
+      overwrite: false,
+      use_filename: false,
+      unique_filename: true,
+      transformation: [
+        { width: 1800, height: 1400, crop: "limit" },
+        { quality: "auto:good", fetch_format: "auto" }
+      ]
+    });
+    return result.secure_url;
+  } catch (error) {
+    throw new Error(`Upload Cloudinary impossible pour ${label}`);
+  }
+}
+
+async function preparePropertyMediaPayload(payload) {
+  const prepared = { ...payload };
+  prepared.image = await uploadImageIfNeeded(prepared.image, "properties", "l'image principale");
+  const gallery = cleanLines(prepared.gallery, 12, 1_200_000);
+  prepared.gallery = (await Promise.all(
+    gallery.map((image, index) => uploadImageIfNeeded(image, "properties/gallery", `l'image galerie ${index + 1}`))
+  )).join("\n");
+  return prepared;
+}
+
+async function prepareCityTileMediaPayload(payload) {
+  return {
+    ...payload,
+    image: await uploadImageIfNeeded(payload.image, "cities", "l'image de ville")
+  };
+}
+
+async function prepareSiteSettingsMediaPayload(payload) {
+  return {
+    ...payload,
+    heroImage: await uploadImageIfNeeded(payload.heroImage, "site", "l'image d'accueil")
+  };
 }
 
 function numberInRange(value, min, max, fallback = 0) {
@@ -898,9 +1024,10 @@ function serveStatic(req, res) {
 
 async function handleApi(req, res) {
   const url = new URL(req.url, `http://${req.headers.host}`);
-  const db = readDb();
 
   try {
+    const db = await loadDb();
+
     if (req.method === "GET" && url.pathname === "/api/bootstrap") {
       sendJson(res, 200, publicSnapshot(db));
       return;
@@ -1034,7 +1161,7 @@ async function handleApi(req, res) {
         status: booking.paymentStatus,
         createdAt: booking.createdAt
       });
-      writeDb(db);
+      await saveDb(db);
       sendJson(res, 201, { booking });
       return;
     }
@@ -1073,7 +1200,7 @@ async function handleApi(req, res) {
         priority: payload.priority || "Normale"
       };
       db.messages.unshift(message);
-      writeDb(db);
+      await saveDb(db);
       sendJson(res, 201, { message });
       return;
     }
@@ -1100,7 +1227,7 @@ async function handleApi(req, res) {
 
     if (req.method === "PATCH" && url.pathname === "/api/admin/settings") {
       if (!requireAdmin(req, res)) return;
-      const payload = await parseBody(req);
+      const payload = await prepareSiteSettingsMediaPayload(await parseBody(req));
       let siteSettings;
       try {
         siteSettings = normalizeSiteSettingsPayload(payload, db.siteSettings || seedSiteSettings);
@@ -1109,14 +1236,14 @@ async function handleApi(req, res) {
         return;
       }
       db.siteSettings = siteSettings;
-      writeDb(db);
+      await saveDb(db);
       sendJson(res, 200, { siteSettings });
       return;
     }
 
     if (req.method === "POST" && url.pathname === "/api/admin/city-tiles") {
       if (!requireAdmin(req, res)) return;
-      const payload = await parseBody(req);
+      const payload = await prepareCityTileMediaPayload(await parseBody(req));
       let cityTile;
       try {
         cityTile = normalizeCityTilePayload(payload);
@@ -1129,7 +1256,7 @@ async function handleApi(req, res) {
         cityTile.id = `${cityTile.id}-${crypto.randomBytes(2).toString("hex")}`;
       }
       db.cityTiles.unshift(cityTile);
-      writeDb(db);
+      await saveDb(db);
       sendJson(res, 201, { cityTile });
       return;
     }
@@ -1143,7 +1270,7 @@ async function handleApi(req, res) {
         sendJson(res, 404, { error: "Vignette ville introuvable" });
         return;
       }
-      const payload = await parseBody(req);
+      const payload = await prepareCityTileMediaPayload(await parseBody(req));
       let cityTile;
       try {
         cityTile = normalizeCityTilePayload({ ...db.cityTiles[index], ...payload }, db.cityTiles[index]);
@@ -1152,14 +1279,14 @@ async function handleApi(req, res) {
         return;
       }
       db.cityTiles[index] = cityTile;
-      writeDb(db);
+      await saveDb(db);
       sendJson(res, 200, { cityTile });
       return;
     }
 
     if (req.method === "POST" && url.pathname === "/api/admin/properties") {
       if (!requireAdmin(req, res)) return;
-      const payload = await parseBody(req);
+      const payload = await preparePropertyMediaPayload(await parseBody(req));
       let property;
       try {
         property = normalizePropertyPayload(payload);
@@ -1171,7 +1298,7 @@ async function handleApi(req, res) {
         property.id = `${property.id}-${crypto.randomBytes(2).toString("hex")}`;
       }
       db.properties.unshift(property);
-      writeDb(db);
+      await saveDb(db);
       sendJson(res, 201, { property });
       return;
     }
@@ -1184,7 +1311,7 @@ async function handleApi(req, res) {
         sendJson(res, 404, { error: "Logement introuvable" });
         return;
       }
-      const payload = await parseBody(req);
+      const payload = await preparePropertyMediaPayload(await parseBody(req));
       let property;
       try {
         property = normalizePropertyPayload({ ...db.properties[index], ...payload }, db.properties[index]);
@@ -1200,7 +1327,7 @@ async function handleApi(req, res) {
           booking.intent = property.intent;
         }
       });
-      writeDb(db);
+      await saveDb(db);
       sendJson(res, 200, { property });
       return;
     }
@@ -1224,7 +1351,7 @@ async function handleApi(req, res) {
       }
       const payment = db.payments.find(item => item.bookingId === booking.id);
       if (payment && payload.paymentStatus) payment.status = payload.paymentStatus;
-      writeDb(db);
+      await saveDb(db);
       sendJson(res, 200, { booking });
       return;
     }
@@ -1240,7 +1367,7 @@ async function handleApi(req, res) {
       }
       if (payload.status) message.status = payload.status;
       if (payload.priority) message.priority = payload.priority;
-      writeDb(db);
+      await saveDb(db);
       sendJson(res, 200, { message });
       return;
     }
@@ -1254,7 +1381,7 @@ async function handleApi(req, res) {
         return;
       }
       const [message] = db.messages.splice(index, 1);
-      writeDb(db);
+      await saveDb(db);
       sendJson(res, 200, { message, deleted: true });
       return;
     }

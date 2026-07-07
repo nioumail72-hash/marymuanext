@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Portail fullstack de location et vente de logements en Cote d'Ivoire.",
   "main": "server.js",
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "scripts": {
     "start": "node server.js",
     "check": "node --check server.js && node --check public/app.js"
@@ -14,5 +17,9 @@
     "reservation"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "cloudinary": "^2.10.0",
+    "mongodb": "^7.4.0"
+  }
 }
