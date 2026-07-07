@@ -34,6 +34,12 @@ input,
 select,
 textarea {
   font: inherit;
+  max-width: 100%;
+}
+
+img,
+video {
+  max-width: 100%;
 }
 
 button {
@@ -1770,6 +1776,453 @@ textarea {
 
   .feature-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1180px) {
+  .hero {
+    min-height: 720px;
+  }
+
+  .search-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .search-panel button {
+    grid-column: 1 / -1;
+  }
+
+  .market-layout,
+  .contact-section,
+  .split-section {
+    grid-template-columns: 1fr;
+  }
+
+  .filters {
+    position: static;
+  }
+
+  .property-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .site-settings-manager,
+  .admin-property-manager,
+  .city-tile-manager {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-top-search {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .detail-top-search button {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 900px) {
+  .topbar {
+    gap: 14px;
+    padding: 12px 18px;
+  }
+
+  .brand {
+    min-width: 0;
+  }
+
+  .brand span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .primary-button,
+  .ghost-button,
+  .search-panel button,
+  .admin-login button {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .hero {
+    align-items: end;
+    min-height: auto;
+    padding-bottom: 0;
+  }
+
+  .hero-content {
+    padding-bottom: 34px;
+  }
+
+  .hero-strip {
+    margin-left: calc(clamp(20px, 5vw, 64px) * -1);
+    margin-right: calc(clamp(20px, 5vw, 64px) * -1);
+    position: relative;
+  }
+
+  .hero-strip span {
+    padding: 18px clamp(20px, 5vw, 64px);
+  }
+
+  .category-rail {
+    padding-bottom: 14px;
+    padding-top: 14px;
+  }
+
+  .section-heading,
+  .admin-heading,
+  .form-title-row {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .city-carousel {
+    grid-auto-columns: minmax(250px, 82vw);
+  }
+
+  .city-card {
+    min-height: auto;
+  }
+
+  .booking-property-preview {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-preview-image {
+    min-height: 230px;
+  }
+
+  .admin-columns,
+  .admin-login,
+  .detail-content-grid,
+  .detail-title-row {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-login {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-login input,
+  .admin-login button {
+    width: 100%;
+  }
+
+  .detail-actions {
+    justify-content: start;
+  }
+
+  .detail-gallery {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(300px, 54vw) auto auto auto;
+  }
+
+  .gallery-main,
+  .gallery-stack,
+  .score-card,
+  .gallery-thumbs {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .gallery-stack,
+  .gallery-thumbs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mini-map {
+    min-height: 160px;
+  }
+
+  .feature-grid,
+  .review-bars {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .availability-search {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .availability-search button {
+    grid-column: 1 / -1;
+  }
+
+  .rate-table {
+    grid-template-columns: 1fr;
+  }
+
+  .rate-table > div {
+    border-right: 0;
+  }
+
+  .rate-table > div:not(:last-child) {
+    border-bottom: 1px solid var(--line);
+  }
+}
+
+@media (max-width: 720px) {
+  .topbar {
+    min-height: 66px;
+  }
+
+  .top-actions .primary-button {
+    min-height: 40px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .hero {
+    padding-top: 96px;
+  }
+
+  .hero-copy {
+    font-size: 1rem;
+  }
+
+  .search-panel,
+  .detail-top-search,
+  .availability-search,
+  .property-grid,
+  .payment-grid,
+  .metric-grid,
+  .feature-grid,
+  .review-bars,
+  .two-cols,
+  .form-grid,
+  .admin-controls,
+  .image-admin-preview,
+  .receipt-grid,
+  .receipt-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .search-panel button,
+  .detail-top-search button,
+  .availability-search button {
+    grid-column: auto;
+    width: 100%;
+  }
+
+  .market-section,
+  .city-carousel-section,
+  .split-section,
+  .payment-section,
+  .contact-section,
+  .admin-section {
+    padding-bottom: 56px;
+    padding-top: 56px;
+  }
+
+  .city-carousel-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .carousel-arrow {
+    display: none;
+  }
+
+  .property-card {
+    min-width: 0;
+  }
+
+  .card-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-card,
+  .contact-form,
+  .admin-dashboard,
+  .site-settings-form,
+  .property-admin-form,
+  .city-tile-form {
+    padding: 18px;
+  }
+
+  .booking-preview-thumbs,
+  .gallery-stack,
+  .gallery-thumbs {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-detail {
+    padding-bottom: 60px;
+    padding-top: 18px;
+  }
+
+  .detail-tabs {
+    border-radius: 14px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .detail-tabs button {
+    min-width: max-content;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .detail-gallery {
+    grid-template-rows: minmax(260px, 62vw) auto auto auto;
+  }
+
+  .gallery-main,
+  .gallery-stack button,
+  .gallery-thumbs button {
+    border-radius: 12px;
+  }
+
+  .detail-actions {
+    flex-direction: column;
+  }
+
+  .reserve-side > div,
+  .receipt-line {
+    align-items: start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .detail-actions button,
+  .reserve-side .primary-button {
+    width: 100%;
+  }
+
+  .receipt-line,
+  .receipt-lines > div,
+  .receipt-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .receipt-hero,
+  .receipt-grid,
+  .receipt-lines,
+  .receipt-footer {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  .receipt-header,
+  .receipt-actions {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .receipt-status {
+    justify-items: start;
+  }
+
+  .modal,
+  .receipt-modal,
+  .image-lightbox {
+    width: min(96vw, 980px);
+  }
+
+  .image-lightbox img {
+    max-height: 68vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .brand-mark {
+    height: 32px;
+    width: 32px;
+  }
+
+  .hero,
+  .market-section,
+  .city-carousel-section,
+  .split-section,
+  .payment-section,
+  .contact-section,
+  .admin-section,
+  .booking-detail {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .search-panel {
+    border-radius: 10px;
+    margin-top: 26px;
+  }
+
+  .hero-strip {
+    margin-left: -12px;
+    margin-right: -12px;
+  }
+
+  .category-rail {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .city-carousel {
+    grid-auto-columns: minmax(220px, 88vw);
+  }
+
+  .property-body,
+  .booking-card,
+  .contact-form,
+  .admin-dashboard,
+  .site-settings-form,
+  .property-admin-form,
+  .city-tile-form,
+  .reserve-side,
+  .score-card {
+    padding: 16px;
+  }
+
+  .booking-preview-image {
+    min-height: 190px;
+  }
+
+  .booking-preview-meta span,
+  .booking-preview-amenities span,
+  .badge {
+    font-size: 0.76rem;
+  }
+
+  .admin-item header {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .detail-top-search,
+  .availability-search {
+    border-radius: 12px;
+    margin-bottom: 18px;
+  }
+
+  .detail-title-row h1 {
+    font-size: 1.75rem;
+  }
+
+  .detail-gallery {
+    gap: 8px;
+    grid-template-rows: minmax(220px, 68vw) auto auto auto;
+  }
+
+  .review-score {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .toast {
+    bottom: 14px;
+    left: 12px;
+    right: 12px;
+    text-align: center;
+    transform: translateY(20px);
+  }
+
+  .toast.show {
+    transform: translateY(0);
   }
 }
 
