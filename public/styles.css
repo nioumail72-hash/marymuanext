@@ -324,6 +324,7 @@ textarea {
 
 .market-section,
 .split-section,
+.owner-section,
 .payment-section,
 .contact-section,
 .admin-section {
@@ -584,6 +585,26 @@ textarea {
   grid-template-columns: 0.9fr 1.1fr;
 }
 
+.owner-section {
+  background: #fff8f5;
+  display: grid;
+  gap: 42px;
+  grid-template-columns: 0.8fr 1.2fr;
+}
+
+.owner-intro {
+  align-content: start;
+  display: grid;
+  gap: 16px;
+}
+
+.owner-intro p:not(.eyebrow) {
+  color: var(--muted);
+  font-size: 1.08rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
 .split-section h2,
 .split-section h3 {
   color: var(--white);
@@ -610,6 +631,7 @@ textarea {
 
 .booking-card,
 .contact-form,
+.owner-property-form,
 .admin-dashboard {
   background: var(--white);
   border-radius: 8px;
@@ -721,7 +743,7 @@ textarea {
 .metric-grid {
   display: grid;
   gap: 16px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 }
 
 .payment-grid article,
@@ -795,6 +817,7 @@ textarea {
 
 .site-settings-manager,
 .admin-property-manager,
+.owner-submission-manager,
 .city-tile-manager {
   border-bottom: 1px solid var(--line);
   border-top: 1px solid var(--line);
@@ -853,6 +876,7 @@ textarea {
 
 .site-settings-form,
 .property-admin-form,
+.owner-property-form,
 .city-tile-form {
   background: #ffffff;
   border: 1px solid var(--line);
@@ -871,12 +895,14 @@ textarea {
 
 .site-settings-form textarea,
 .property-admin-form textarea,
+.owner-property-form textarea,
 .city-tile-form textarea {
   resize: vertical;
 }
 
 .site-settings-form input[type="file"],
 .property-admin-form input[type="file"],
+.owner-property-form input[type="file"],
 .city-tile-form input[type="file"] {
   background: #f7fbfb;
   border-style: dashed;
@@ -1799,7 +1825,8 @@ textarea {
 
   .market-layout,
   .contact-section,
-  .split-section {
+  .split-section,
+  .owner-section {
     grid-template-columns: 1fr;
   }
 
@@ -1813,6 +1840,7 @@ textarea {
 
   .site-settings-manager,
   .admin-property-manager,
+  .owner-submission-manager,
   .city-tile-manager {
     grid-template-columns: 1fr;
   }
@@ -2018,6 +2046,7 @@ textarea {
   .market-section,
   .city-carousel-section,
   .split-section,
+  .owner-section,
   .payment-section,
   .contact-section,
   .admin-section {
@@ -2043,6 +2072,7 @@ textarea {
 
   .booking-card,
   .contact-form,
+  .owner-property-form,
   .admin-dashboard,
   .site-settings-form,
   .property-admin-form,
@@ -2154,6 +2184,7 @@ textarea {
   .market-section,
   .city-carousel-section,
   .split-section,
+  .owner-section,
   .payment-section,
   .contact-section,
   .admin-section,
@@ -2184,6 +2215,7 @@ textarea {
   .property-body,
   .booking-card,
   .contact-form,
+  .owner-property-form,
   .admin-dashboard,
   .site-settings-form,
   .property-admin-form,
