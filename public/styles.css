@@ -118,6 +118,7 @@ a {
 }
 
 .primary-button,
+.owner-button,
 .ghost-button,
 .search-panel button,
 .admin-login button {
@@ -133,6 +134,17 @@ a {
 .admin-login button {
   background: var(--secondary);
   color: var(--white);
+}
+
+.owner-button {
+  background: var(--primary);
+  border: 1px solid rgba(181, 237, 231, 0.45);
+  color: var(--primary-soft);
+}
+
+.owner-button:hover {
+  background: #00504c;
+  color: #ffffff;
 }
 
 .ghost-button {
@@ -1871,6 +1883,7 @@ textarea {
   }
 
   .primary-button,
+  .owner-button,
   .ghost-button,
   .search-panel button,
   .admin-login button {
@@ -2006,6 +2019,12 @@ textarea {
   }
 
   .top-actions .primary-button {
+    min-height: 40px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .top-actions .owner-button {
     min-height: 40px;
     padding-left: 12px;
     padding-right: 12px;
