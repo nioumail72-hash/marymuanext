@@ -12,6 +12,7 @@ const state = {
   currentReceipt: null,
   adminProperties: [],
   adminCityTiles: [],
+  ownerSubmissions: [],
   notificationCount: 0,
   notificationTimer: null,
   adminIdleTimer: null,
@@ -81,6 +82,16 @@ function syncImagePreview() {
     : "<small>Aucune image ajoutee.</small>";
 }
 
+function syncOwnerImagePreview() {
+  const form = qs("#ownerPropertyForm");
+  const preview = qs("#ownerImagePreview");
+  if (!form || !preview) return;
+  const images = uniqueList([form.elements.image.value, ...splitLines(form.elements.gallery.value)]).slice(0, 12);
+  preview.innerHTML = images.length
+    ? images.map((image, index) => `<span style="background-image:url('${image}')" title="Image ${index + 1}"></span>`).join("")
+    : "<small>Aucune image ajoutee.</small>";
+}
+
 function imageFileToDataUrl(file) {
   return new Promise((resolve, reject) => {
     if (!file.type.startsWith("image/")) {
@@ -131,6 +142,36 @@ async function handleGalleryFiles(event) {
     form.elements.gallery.value = uniqueList([...splitLines(form.elements.gallery.value), ...images]).join("\n");
     syncImagePreview();
     toast(`${images.length} image(s) ajoutee(s) a la galerie`);
+  } catch (error) {
+    toast(error.message);
+  } finally {
+    event.target.value = "";
+  }
+}
+
+async function handleOwnerMainImageFile(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  try {
+    qs("#ownerPropertyForm").elements.image.value = await imageFileToDataUrl(file);
+    syncOwnerImagePreview();
+    toast("Image principale ajoutee");
+  } catch (error) {
+    toast(error.message);
+  } finally {
+    event.target.value = "";
+  }
+}
+
+async function handleOwnerGalleryFiles(event) {
+  const files = [...(event.target.files || [])].slice(0, 12);
+  if (!files.length) return;
+  try {
+    const form = qs("#ownerPropertyForm");
+    const images = await Promise.all(files.map(imageFileToDataUrl));
+    form.elements.gallery.value = uniqueList([...splitLines(form.elements.gallery.value), ...images]).join("\n");
+    syncOwnerImagePreview();
+    toast(`${images.length} image(s) ajoutee(s) a la proposition`);
   } catch (error) {
     toast(error.message);
   } finally {
@@ -772,6 +813,36 @@ function cityTileAdminItem(tile) {
   `;
 }
 
+function ownerSubmissionAdminItem(submission) {
+  const property = submission.property || {};
+  const owner = submission.owner || {};
+  const published = submission.status === "Publie";
+  return `
+    <article class="admin-item owner-submission-item">
+      <header>
+        <div>
+          <strong>${property.title || "Bien sans titre"}</strong>
+          <small>${owner.name || "Proprietaire"} - ${owner.phone || "Telephone non precise"}</small>
+        </div>
+        <span class="badge secondary">${submission.status}</span>
+      </header>
+      <div class="property-admin-media" style="background-image:url('${property.image || ""}')"></div>
+      <small>${property.category || "Categorie"} - ${property.district || "Quartier"}, ${property.city || "Ville"}</small>
+      <div class="receipt-line"><span>Location</span><strong>${fcfa(property.price)}</strong></div>
+      <div class="receipt-line"><span>Vente</span><strong>${property.salePrice ? fcfa(property.salePrice) : "Non"}</strong></div>
+      <p>${property.description || "Aucune description."}</p>
+      ${submission.notes ? `<small>Note proprietaire: ${submission.notes}</small>` : ""}
+      ${submission.propertyId ? `<small>Publie dans le catalogue: ${submission.propertyId}</small>` : ""}
+      <div class="admin-controls owner-controls">
+        <button class="primary-button" data-owner-approve="${submission.id}" ${published ? "disabled" : ""}>Publier</button>
+        <button class="outline-button" data-owner-review="${submission.id}">Verifier</button>
+        <button class="outline-button" data-owner-reject="${submission.id}">Refuser</button>
+        <button class="danger-button" data-owner-delete="${submission.id}">Supprimer</button>
+      </div>
+    </article>
+  `;
+}
+
 function syncCityTilePreview() {
   const form = qs("#cityTileForm");
   const preview = qs("#cityTileImagePreview");
@@ -913,6 +984,32 @@ async function submitProperty(event) {
   }
 }
 
+async function submitOwnerProperty(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  if (!form.reportValidity()) return;
+  const payload = Object.fromEntries(new FormData(form).entries());
+  const mainImage = payload.image;
+  payload.gallery = uniqueList(splitLines(payload.gallery).filter(image => image !== mainImage)).join("\n");
+  ["price", "salePrice", "beds", "baths", "surface", "guests"].forEach(key => {
+    payload[key] = payload[key] === "" ? null : Number(payload[key]);
+  });
+  try {
+    const { submission } = await api("/api/owner/properties", { method: "POST", body: payload });
+    form.reset();
+    form.elements.city.value = "Abidjan";
+    form.elements.beds.value = 1;
+    form.elements.baths.value = 1;
+    form.elements.guests.value = 2;
+    form.elements.availability.value = "A verifier avec le proprietaire";
+    syncOwnerImagePreview();
+    toast(`Bien soumis pour validation: ${submission.propertyTitle}`);
+    loadNotifications();
+  } catch (error) {
+    toast(error.message);
+  }
+}
+
 function updateNotificationUi(data) {
   const count = Number(data.total || 0);
   const badge = qs("#notificationBadge");
@@ -962,6 +1059,7 @@ function logoutAdmin(reason = "Session fermee") {
   qs("#messageList").innerHTML = "";
   qs("#propertyAdminList").innerHTML = "";
   qs("#cityTileList").innerHTML = "";
+  qs("#ownerSubmissionList").innerHTML = "";
   resetPropertyForm();
   resetCityTileForm();
   if (state.adminPollTimer) clearInterval(state.adminPollTimer);
@@ -992,6 +1090,7 @@ async function loadAdmin() {
     metricCard("Chiffre d'affaires potentiel", fcfa(data.metrics.revenue)),
     metricCard("Reservations a suivre", data.metrics.pendingBookings),
     metricCard("Requetes ouvertes", data.metrics.openMessages),
+    metricCard("Biens proprietaires", data.metrics.pendingOwnerSubmissions),
     metricCard("Biens au catalogue", data.metrics.availableListings)
   ].join("");
   state.siteSettings = data.siteSettings || state.siteSettings;
@@ -1000,9 +1099,11 @@ async function loadAdmin() {
   qs("#messageList").innerHTML = data.messages.length ? data.messages.map(messageAdminItem).join("") : "<p>Aucune requete.</p>";
   qs("#propertyAdminList").innerHTML = data.properties.length ? data.properties.map(propertyAdminItem).join("") : "<p>Aucun logement.</p>";
   qs("#cityTileList").innerHTML = data.cityTiles.length ? data.cityTiles.map(cityTileAdminItem).join("") : "<p>Aucune vignette.</p>";
+  qs("#ownerSubmissionList").innerHTML = data.ownerSubmissions?.length ? data.ownerSubmissions.map(ownerSubmissionAdminItem).join("") : "<p>Aucune proposition proprietaire.</p>";
   window.adminBookings = data.bookings;
   state.adminProperties = data.properties;
   state.adminCityTiles = data.cityTiles;
+  state.ownerSubmissions = data.ownerSubmissions || [];
 }
 
 async function updateBooking(id, payload) {
@@ -1023,6 +1124,26 @@ async function deleteMessage(id) {
   if (!confirmed) return;
   await api(`/api/admin/messages/${id}`, { method: "DELETE", admin: true });
   toast("Requete supprimee");
+  loadAdmin();
+  loadNotifications();
+}
+
+async function updateOwnerSubmission(id, payload) {
+  await api(`/api/admin/owner-submissions/${id}`, { method: "PATCH", admin: true, body: payload });
+  toast(payload.status === "Publie" ? "Bien publie dans le catalogue" : "Proposition mise a jour");
+  const data = await api("/api/bootstrap");
+  state.properties = data.properties;
+  renderProperties();
+  renderBookingOptions();
+  loadAdmin();
+  loadNotifications();
+}
+
+async function deleteOwnerSubmission(id) {
+  const confirmed = window.confirm("Supprimer definitivement cette proposition proprietaire ?");
+  if (!confirmed) return;
+  await api(`/api/admin/owner-submissions/${id}`, { method: "DELETE", admin: true });
+  toast("Proposition supprimee");
   loadAdmin();
   loadNotifications();
 }
@@ -1083,6 +1204,10 @@ function bindEvents() {
     const archiveMessage = event.target.closest("[data-message-archive]");
     const doneMessage = event.target.closest("[data-message-done]");
     const deleteMessageButton = event.target.closest("[data-message-delete]");
+    const approveOwner = event.target.closest("[data-owner-approve]");
+    const reviewOwner = event.target.closest("[data-owner-review]");
+    const rejectOwner = event.target.closest("[data-owner-reject]");
+    const deleteOwner = event.target.closest("[data-owner-delete]");
     if (reserve) {
       event.stopPropagation();
       selectForBooking(reserve.dataset.reserve);
@@ -1125,6 +1250,18 @@ function bindEvents() {
     if (deleteMessageButton) {
       deleteMessage(deleteMessageButton.dataset.messageDelete);
     }
+    if (approveOwner) {
+      updateOwnerSubmission(approveOwner.dataset.ownerApprove, { status: "Publie" });
+    }
+    if (reviewOwner) {
+      updateOwnerSubmission(reviewOwner.dataset.ownerReview, { status: "En verification" });
+    }
+    if (rejectOwner) {
+      updateOwnerSubmission(rejectOwner.dataset.ownerReject, { status: "Refuse" });
+    }
+    if (deleteOwner) {
+      deleteOwnerSubmission(deleteOwner.dataset.ownerDelete);
+    }
     if (editProperty) {
       const property = state.adminProperties.find(item => item.id === editProperty.dataset.editProperty);
       if (property) fillPropertyForm(property);
@@ -1162,6 +1299,12 @@ function bindEvents() {
     if (["checkIn", "checkOut", "intent"].includes(event.target.name)) syncBookingNights();
   });
   qs("#contactForm").addEventListener("submit", submitContact);
+  qs("#ownerPropertyForm").addEventListener("submit", submitOwnerProperty);
+  qs("#ownerMainImageFile").addEventListener("change", handleOwnerMainImageFile);
+  qs("#ownerGalleryImageFiles").addEventListener("change", handleOwnerGalleryFiles);
+  qs("#ownerPropertyForm").addEventListener("input", event => {
+    if (["image", "gallery"].includes(event.target.name)) syncOwnerImagePreview();
+  });
   qs("#siteSettingsForm").addEventListener("submit", submitSiteSettings);
   qs("#heroImageFile").addEventListener("change", handleHeroImageFile);
   qs("#siteSettingsForm").addEventListener("input", event => {
