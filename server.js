@@ -343,6 +343,7 @@ const seedDb = {
   properties: seedProperties,
   cityTiles: seedCityTiles,
   siteSettings: seedSiteSettings,
+  ownerSubmissions: [],
   bookings: [],
   messages: [
     {
@@ -372,6 +373,7 @@ function normalizeDb(db = {}) {
     properties: Array.isArray(db.properties) ? db.properties : seedProperties,
     cityTiles: Array.isArray(db.cityTiles) ? db.cityTiles : seedCityTiles,
     siteSettings: db.siteSettings || seedSiteSettings,
+    ownerSubmissions: Array.isArray(db.ownerSubmissions) ? db.ownerSubmissions : [],
     bookings: Array.isArray(db.bookings) ? db.bookings : [],
     messages: Array.isArray(db.messages) ? db.messages : [],
     payments: Array.isArray(db.payments) ? db.payments : []
@@ -445,7 +447,7 @@ function parseBody(req) {
     let raw = "";
     req.on("data", chunk => {
       raw += chunk;
-      if (raw.length > 8_000_000) {
+      if (raw.length > 24_000_000) {
         reject(new Error("Payload trop volumineux"));
         req.destroy();
       }
@@ -579,6 +581,10 @@ async function prepareSiteSettingsMediaPayload(payload) {
   };
 }
 
+async function prepareOwnerSubmissionPayload(payload) {
+  return preparePropertyMediaPayload(payload);
+}
+
 function numberInRange(value, min, max, fallback = 0) {
   const number = Number(value);
   if (!Number.isFinite(number)) return fallback;
@@ -683,6 +689,33 @@ function normalizePropertyPayload(payload, existingProperty = null) {
     ],
     paymentMethods: paymentMethods.length ? paymentMethods : ["Mobile Money", "Carte bancaire", "Virement"],
     description: cleanText(payload.description, 1200)
+  };
+}
+
+function normalizeOwnerSubmissionPayload(payload) {
+  if (!isValidPersonName(payload.ownerName)) throw new Error("Nom du proprietaire invalide");
+  if (!isValidPhone(payload.ownerPhone)) throw new Error("Telephone du proprietaire invalide");
+  if (!isValidEmail(payload.ownerEmail)) throw new Error("Adresse email du proprietaire invalide");
+  if (!isValidSimpleText(payload.ownerType || "Proprietaire", 2, 60)) throw new Error("Profil proprietaire invalide");
+
+  const property = normalizePropertyPayload({
+    ...payload,
+    status: "En attente validation",
+    availability: payload.availability || "A verifier avec le proprietaire"
+  });
+
+  return {
+    id: crypto.randomUUID(),
+    createdAt: new Date().toISOString(),
+    status: "En attente",
+    owner: {
+      name: cleanText(payload.ownerName, 80),
+      phone: cleanText(payload.ownerPhone, 24),
+      email: cleanText(payload.ownerEmail, 120),
+      type: cleanText(payload.ownerType || "Proprietaire", 60)
+    },
+    property,
+    notes: cleanText(payload.ownerNotes || "", 800)
   };
 }
 
@@ -811,10 +844,12 @@ function publicSnapshot(db) {
 function notificationSnapshot(db) {
   const pendingBookings = db.bookings.filter(item => !["Confirmee", "Refusee", "Terminee"].includes(item.status)).length;
   const openMessages = db.messages.filter(item => !["Traite", "Archive"].includes(item.status)).length;
+  const pendingOwnerSubmissions = (db.ownerSubmissions || []).filter(item => !["Publie", "Refuse"].includes(item.status)).length;
   return {
     pendingBookings,
     openMessages,
-    total: pendingBookings + openMessages,
+    pendingOwnerSubmissions,
+    total: pendingBookings + openMessages + pendingOwnerSubmissions,
     updatedAt: new Date().toISOString()
   };
 }
@@ -1205,6 +1240,29 @@ async function handleApi(req, res) {
       return;
     }
 
+    if (req.method === "POST" && url.pathname === "/api/owner/properties") {
+      const payload = await prepareOwnerSubmissionPayload(await parseBody(req));
+      let submission;
+      try {
+        submission = normalizeOwnerSubmissionPayload(payload);
+      } catch (error) {
+        sendJson(res, 400, { error: error.message });
+        return;
+      }
+      db.ownerSubmissions = db.ownerSubmissions || [];
+      db.ownerSubmissions.unshift(submission);
+      await saveDb(db);
+      sendJson(res, 201, {
+        submission: {
+          id: submission.id,
+          status: submission.status,
+          propertyTitle: submission.property.title,
+          createdAt: submission.createdAt
+        }
+      });
+      return;
+    }
+
     if (req.method === "GET" && url.pathname === "/api/admin/dashboard") {
       if (!requireAdmin(req, res)) return;
       const revenue = db.payments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
@@ -1213,12 +1271,14 @@ async function handleApi(req, res) {
         messages: db.messages,
         payments: db.payments,
         properties: db.properties,
+        ownerSubmissions: db.ownerSubmissions || [],
         cityTiles: db.cityTiles || [],
         siteSettings: db.siteSettings || seedSiteSettings,
         metrics: {
           revenue,
           pendingBookings: db.bookings.filter(item => item.status !== "Confirmee").length,
           openMessages: db.messages.filter(item => !["Traite", "Archive"].includes(item.status)).length,
+          pendingOwnerSubmissions: (db.ownerSubmissions || []).filter(item => !["Publie", "Refuse"].includes(item.status)).length,
           availableListings: db.properties.length
         }
       });
@@ -1329,6 +1389,57 @@ async function handleApi(req, res) {
       });
       await saveDb(db);
       sendJson(res, 200, { property });
+      return;
+    }
+
+    if (req.method === "PATCH" && url.pathname.startsWith("/api/admin/owner-submissions/")) {
+      if (!requireAdmin(req, res)) return;
+      const id = decodeURIComponent(url.pathname.split("/").pop());
+      db.ownerSubmissions = db.ownerSubmissions || [];
+      const submission = db.ownerSubmissions.find(item => item.id === id);
+      if (!submission) {
+        sendJson(res, 404, { error: "Proposition proprietaire introuvable" });
+        return;
+      }
+      const payload = await parseBody(req);
+      const status = cleanText(payload.status, 40);
+      if (!["En attente", "En verification", "Publie", "Refuse"].includes(status)) {
+        sendJson(res, 400, { error: "Statut de proposition invalide" });
+        return;
+      }
+      submission.status = status;
+      submission.reviewedAt = new Date().toISOString();
+      if (payload.note) {
+        submission.reviewNote = cleanText(payload.note, 800);
+      }
+      if (status === "Publie" && !submission.propertyId) {
+        const property = normalizePropertyPayload({
+          ...submission.property,
+          status: payload.catalogStatus || "Disponible"
+        });
+        if (db.properties.some(item => item.id === property.id)) {
+          property.id = `${property.id}-${crypto.randomBytes(2).toString("hex")}`;
+        }
+        db.properties.unshift(property);
+        submission.propertyId = property.id;
+      }
+      await saveDb(db);
+      sendJson(res, 200, { submission });
+      return;
+    }
+
+    if (req.method === "DELETE" && url.pathname.startsWith("/api/admin/owner-submissions/")) {
+      if (!requireAdmin(req, res)) return;
+      const id = decodeURIComponent(url.pathname.split("/").pop());
+      db.ownerSubmissions = db.ownerSubmissions || [];
+      const index = db.ownerSubmissions.findIndex(item => item.id === id);
+      if (index === -1) {
+        sendJson(res, 404, { error: "Proposition proprietaire introuvable" });
+        return;
+      }
+      const [submission] = db.ownerSubmissions.splice(index, 1);
+      await saveDb(db);
+      sendJson(res, 200, { submission, deleted: true });
       return;
     }
 
