@@ -20,6 +20,7 @@
         <nav class="desktop-nav" aria-label="Navigation principale">
           <a href="#couverture">Villes</a>
           <a href="#biens">Biens</a>
+          <a href="#proprietaires">Proprietaires</a>
           <a href="#reservation">Reservation</a>
           <a href="#paiements">Paiements</a>
           <a href="#contact">Contact</a>
@@ -129,6 +130,62 @@
             </aside>
             <div class="property-grid" id="propertyGrid"></div>
           </div>
+        </section>
+
+        <section class="owner-section" id="proprietaires">
+          <div class="owner-intro">
+            <p class="eyebrow">Espace proprietaires</p>
+            <h2>Proposez votre residence sur hebergementciv.</h2>
+            <p>Les proprietaires peuvent soumettre un appartement, studio, suite, penthouse ou logement etudiant. Notre equipe verifie les informations avant publication.</p>
+            <div class="steps">
+              <span>1. Vous renseignez le bien</span>
+              <span>2. Notre equipe verifie les details et les images</span>
+              <span>3. Le logement est publie apres validation</span>
+            </div>
+          </div>
+          <form class="owner-property-form" id="ownerPropertyForm">
+            <h3>Inscription proprietaire</h3>
+            <div class="form-grid">
+              <label>Nom proprietaire<input name="ownerName" required minlength="2" maxlength="80" autocomplete="name"></label>
+              <label>Telephone<input name="ownerPhone" type="tel" required inputmode="tel" minlength="8" maxlength="24" pattern="^[+0-9][0-9 +().-]{7,23}$" autocomplete="tel"></label>
+              <label>Email<input name="ownerEmail" type="email" maxlength="120" autocomplete="email"></label>
+              <label>Profil<select name="ownerType"><option>Proprietaire</option><option>Agence immobiliere</option><option>Gestionnaire de residence</option><option>Mandataire</option></select></label>
+            </div>
+            <div class="form-grid">
+              <label>Titre du bien<input name="title" required minlength="3" maxlength="120" placeholder="Residence Riviera Palm"></label>
+              <label>Categorie<select name="category" required>
+                <option>Appartement</option>
+                <option>Studio</option>
+                <option>Suite</option>
+                <option>Penthouse</option>
+                <option>Logement etudiant</option>
+              </select></label>
+              <label>Operation<select name="intent" required><option value="location">Location</option><option value="vente">Vente</option></select></label>
+              <label>Ville<input name="city" required minlength="2" maxlength="80" value="Abidjan"></label>
+              <label>Quartier<input name="district" required minlength="2" maxlength="80" placeholder="Cocody Riviera"></label>
+              <label>Prix / nuit FCFA<input name="price" type="number" required min="1000" max="500000000" step="500" inputmode="numeric"></label>
+              <label>Prix de vente FCFA<input name="salePrice" type="number" min="0" max="5000000000" step="50000" inputmode="numeric" placeholder="Optionnel"></label>
+              <label>Surface m2<input name="surface" type="number" required min="1" max="5000" step="1" inputmode="numeric"></label>
+              <label>Chambres<input name="beds" type="number" min="0" max="30" step="1" value="1" inputmode="numeric"></label>
+              <label>Salles de bains<input name="baths" type="number" min="0" max="30" step="1" value="1" inputmode="numeric"></label>
+              <label>Voyageurs max<input name="guests" type="number" required min="1" max="100" step="1" value="2" inputmode="numeric"></label>
+              <label>Disponibilite<input name="availability" maxlength="120" value="A verifier avec le proprietaire"></label>
+            </div>
+            <label>Image principale URL<input name="image" type="text" required maxlength="1200000" placeholder="https://... ou image choisie"></label>
+            <label>Importer image principale<input id="ownerMainImageFile" type="file" accept="image/png,image/jpeg,image/webp"></label>
+            <label>Galerie images URL<textarea name="gallery" rows="3" maxlength="4000000" placeholder="Une URL par ligne, ou utilisez les fichiers ci-dessous"></textarea></label>
+            <label>Importer galerie<input id="ownerGalleryImageFiles" type="file" accept="image/png,image/jpeg,image/webp" multiple></label>
+            <div class="image-admin-preview" id="ownerImagePreview" aria-live="polite"></div>
+            <label>Description du bien<textarea name="description" rows="4" required minlength="20" maxlength="1200" placeholder="Decrivez le logement, l'environnement, les avantages..."></textarea></label>
+            <div class="form-grid two">
+              <label>Equipements<textarea name="amenities" rows="4" required maxlength="1200" placeholder="WiFi fibre&#10;Parking&#10;Climatisation"></textarea></label>
+              <label>Points forts<textarea name="highlights" rows="4" maxlength="1200" placeholder="Acces facile&#10;Quartier securise&#10;Proche commerces"></textarea></label>
+              <label>Regles de la maison<textarea name="houseRules" rows="4" maxlength="1400" placeholder="Piece d'identite requise&#10;Respect du voisinage"></textarea></label>
+              <label>Moyens de paiement<textarea name="paymentMethods" rows="4" maxlength="600" placeholder="Mobile Money&#10;Virement&#10;Paiement a l'agence"></textarea></label>
+            </div>
+            <label>Note pour l'equipe<textarea name="ownerNotes" rows="3" maxlength="800" placeholder="Disponibilites pour visite, titre de propriete, precision utile..."></textarea></label>
+            <button class="primary-button full" type="submit">Soumettre le bien pour validation</button>
+          </form>
         </section>
 
         <section class="split-section" id="reservation">
@@ -327,6 +384,13 @@
                 <h3>Requetes entrantes</h3>
                 <div class="admin-list" id="messageList"></div>
               </div>
+            </div>
+            <div class="owner-submission-manager">
+              <div>
+                <h3>Propositions proprietaires</h3>
+                <p>Les biens proposes ici restent invisibles au public jusqu'a validation.</p>
+              </div>
+              <div class="admin-list" id="ownerSubmissionList"></div>
             </div>
           </div>
         </section>
